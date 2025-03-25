@@ -282,7 +282,7 @@ SELECT COUNT(Nome) FROM Alunos WHERE Disciplinas = 'Física';
 -- Consultar o nome e a quantidade de caracteres do nome
 SELECT Nome, LENGTH(Nome) FROM Alunos ORDER BY LENGTH(Nome) DESC;
 -- Consultar o nome em caixa alta
-SELECT UPPER(Nome) FROM ALunos;
+SELECT UPPER(Nome) FROM Alunos;
 -- Consultar o nome em caixa baixa
 SELECT LOWER(Nome) FROM Alunos;
 -- Consultar o nome e disciplinas concatenadas
@@ -290,12 +290,157 @@ SELECT CONCAT(Nome," -> ", Disciplinas) FROM Alunos;
 -- Consultar no seguinte formato: Aluno nasceu no dia do mês de ano
 SELECT CONCAT( Nome, " nasceu no dia ", DAY(Data_nascimento), " do mês ", MONTH(Data_nascimento), " do ano de ", YEAR(Data_nascimento), "." ) AS 'Mensagem' FROM Alunos;
 -- Consultar AND 
+-- Consultar os alunos que nasceram no mês de janeiro até junho
+SELECT Nome, MONTH(Data_nascimento) FROM Alunos WHERE MONTH(Data_nascimento) >= 1 AND MONTH(Data_nascimento) <= 6 ORDER BY MONTH (Data_nascimento) ASC;
+-- Consultar os alunos que tem a nota inferior a 7 em todas as notas
+-- Consultar: nome, nota1, nota2 e nota3
+-- Filtro: nota1, nota2 e nota3 < 7
+SELECT Nome, Nota1,Nota2,Nota3, FORMAT ((Nota1 + Nota2 + Nota3) / 3,2) AS 'Média' FROM Alunos WHERE Nota1 < 7 AND Nota2 <7 AND Nota3 < 7;
+
 -- Consultar OR
+-- Consultar os alunos das disciplinas 'Educação Física', 'Artes' ou 'Português'
+SELECT Disciplinas, Nome FROM Alunos WHERE Disciplinas = 'Educação Física' OR Disciplinas = 'Português' OR Disciplinas = 'Artes' ORDER BY Disciplinas ASC, Nome ASC;
 -- Consultar nome exato
+SELECT Nome FROM Alunos where Nome ='Silva';
 -- Consultar nome começa com 
+select Nome from Alunos where nome like 'Silva%';
 -- Consultar nome termina com
+select Nome from Alunos where Nome like '%Silva';
 -- Consultar nome contém em qualquer parte
+select Nome from Alunos where Nome like '%Silva%';
 -- Consultar a data de nascimento formatada
+select Nome, date_format(Data_nascimento, '%d/%m/%Y') from Alunos;
 -- Consultar os alunos limitando a quantidade
+select Id, Nome from Alunos limit 15;
 -- Consultar os alunos apresentando a primeira página
+select Id, Nome from Alunos limit 0,15;
 -- Consultar os alunos apresentando a segunda página
+select Id, Nome from Alunos limit 15,15;
+-- Consultar os alunos apresentando a terceira página
+select Id, Nome from Alunos limit 30,15;
+-- Consultar os alunos apresentando a quarta página
+select Id, Nome from Alunos limit 45,15;
+
+
+
+SELECT Id,Nome,CPF,Nota1,Nota2,Nota3,Data_nascimento, Disciplinas FROM Alunos;
+show create table Alunos;
+
+drop table if exists formacoes;
+-- Primary key(PK): Chave primaria é um identificador unico dos registros dessa tabela
+-- auto_increment: gera o id automagicamente
+-- not null: faz com que a coluna seja obrigatoria
+-- unique: faz com que tenha somente um registro com aquela coluna
+create table formacoes(Id int primary key auto_increment, Nome varchar(100) not null unique);
+insert into formacoes (nome) values ('SuperDev');
+insert into formacoes (nome) values ('Adas');
+-- o insert abaixo não funciona pois já temos um formação com o nome 'Adas'
+-- insert into formacoes (nome) values ('Adas');
+-- o insert abaixo não funciona pois o nome não pode ser nulo
+-- insert into formacoes (nome) values (null)
+select id, nome from formacoes;
+
+-- Criar a tabela profissoes
+CREATE TABLE profissoes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    salario_base DOUBLE PRECISION,
+    quantidade_horas INTEGER
+);
+
+-- Inserir registros
+INSERT INTO profissoes (nome, salario_base, quantidade_horas) VALUES
+    ('Advogado', 5000.90, 80),
+    ('Biólogo', 3500.00, 220),
+    ('Pedreiro', 10000.00, 200);
+
+-- Adicionar a coluna de descrição
+ALTER TABLE profissoes ADD COLUMN descricao TEXT;
+
+-- Atualizar descrições
+UPDATE profissoes SET descricao = 'Profissional responsável por representar clientes em questões jurídicas.' WHERE nome = 'Advogado';
+UPDATE profissoes SET descricao = 'Profissional que estuda organismos vivos e seu ambiente.' WHERE nome = 'Biólogo';
+UPDATE profissoes SET descricao = 'Profissional especializado na construção e reforma de edificações.' WHERE nome = 'Pedreiro';
+
+-- Inserir novos registros
+INSERT INTO profissoes (nome, salario_base, quantidade_horas, descricao) VALUES
+    ('Motorista', 4500.00, 160, 'Profissional responsável pelo transporte de passageiros ou cargas.');
+INSERT INTO profissoes (nome, descricao) VALUES
+    ('Programador', 'Profissional que desenvolve e mantém softwares e sistemas computacionais.');
+
+-- Consultas
+
+-- Profissões que começam com 'P'
+SELECT * FROM profissoes WHERE nome LIKE 'P%';
+
+-- Profissões com salário base maior que 2000 e quantidade de horas menor que 150
+SELECT * FROM profissoes WHERE salario_base > 2000 AND quantidade_horas < 150;
+
+-- Profissões do menor para o maior salário base
+SELECT * FROM profissoes ORDER BY salario_base ASC;
+
+-- Profissões com salário base entre 2500 e 8000
+SELECT * FROM profissoes WHERE salario_base BETWEEN 2500 AND 8000;
+
+-- Profissões sem salário base definido
+SELECT * FROM profissoes WHERE salario_base IS NULL;
+
+-- Profissões ordenadas por quantidade de horas do maior para o menor
+SELECT * FROM profissoes ORDER BY quantidade_horas DESC;
+
+-- Profissões com quantidade de horas menor que 100 ou maior que 220
+SELECT * FROM profissoes WHERE quantidade_horas < 100 OR quantidade_horas > 220;
+
+-- Profissões que contêm 'i' em qualquer parte
+SELECT * FROM profissoes WHERE nome LIKE '%i%';
+
+-- Profissões sem quantidade de horas definidas
+SELECT * FROM profissoes WHERE quantidade_horas IS NULL;
+
+-- Profissões ordenadas por quantidade de horas do menor para o maior
+SELECT * FROM profissoes ORDER BY quantidade_horas ASC;
+
+-- Profissões que começam com 'M'
+SELECT * FROM profissoes WHERE nome LIKE 'M%';
+
+-- Profissões listando 5 registros
+SELECT * FROM profissoes LIMIT 5;
+
+-- Paginação: Listar 5 registros por página, ordenados por ID crescente
+SELECT * FROM profissoes ORDER BY id ASC LIMIT 5 OFFSET 0; -- Página 1
+SELECT * FROM profissoes ORDER BY id ASC LIMIT 5 OFFSET 5; -- Página 2
+SELECT * FROM profissoes ORDER BY id ASC LIMIT 5 OFFSET 10; -- Página 3
+SELECT * FROM profissoes ORDER BY id ASC LIMIT 5 OFFSET 15; -- Página 4
+
+-- Profissões que terminam com 'o'
+SELECT * FROM profissoes WHERE nome LIKE '%o';
+
+-- Nome concatenado com quantidade de horas
+SELECT nome || ' - ' || quantidade_horas AS nome_horas FROM profissoes;
+
+-- Nome e quantidade de caracteres do nome
+SELECT nome, LENGTH(nome) AS quantidade_caracteres FROM profissoes;
+
+-- Nome e quantidade de caracteres ordenados do maior para o menor
+SELECT nome, LENGTH(nome) AS quantidade_caracteres FROM profissoes ORDER BY quantidade_caracteres DESC;
+
+-- Nome da profissão em letras maiúsculas
+SELECT UPPER(nome) AS nome_maiusculo FROM profissoes;
+
+-- Menor salário base
+SELECT MIN(salario_base) AS menor_salario FROM profissoes;
+
+-- Soma dos salários base
+SELECT SUM(salario_base) AS soma_salarios FROM profissoes;
+
+-- Maior salário
+SELECT MAX(salario_base) AS maior_salario FROM profissoes;
+
+-- Menor salário onde a quantidade de horas é maior que 150
+SELECT MIN(salario_base) AS menor_salario FROM profissoes WHERE quantidade_horas > 150;
+
+-- Média dos salários onde o salário base está entre 5000 e 7000
+SELECT AVG(salario_base) AS media_salarios FROM profissoes WHERE salario_base BETWEEN 5000 AND 7000;
+
+-- Nome da profissão em letras minúsculas
+SELECT LOWER(nome) AS nome_minusculo FROM profissoes;
