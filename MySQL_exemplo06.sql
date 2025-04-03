@@ -56,7 +56,35 @@ select * from vw_livros_editoras;
 -- Criar uma view vw_livros_editoras_autores 
 -- 					 (listar nome do livro, autor, editora onde a quantidade de páginas for maior que 1000)
 
+create or replace view vw_livros_editoras_autores as
+	select
+    livros.nome as "nome_livro", 
+    autores.nome as "nome_autores", 
+    editoras.nome as "nome_editora",
+    livros.quantidade_paginas as "quantidade_páginas"
+    
+    from livros
+    inner join editoras on (livros.id_editora = editoras.id)
+    inner join autores on (livros.id_autor = autores.id) 
+    where quantidade_paginas >= 1000;
+    
+select * from vw_livros_editoras_autores;
+
 -- Criar uma view vw_livros_fantasia (listar nome do livro, quantidade de paginas, descricao) da categoria 'Fantasia'
+create or replace view vw_livros_fantasia as
+select
+livros.nome as "nome do livro", 
+livros.quantidade_paginas as "quantidades de paginas", 
+livros.descricao as "descrição", 
+categorias.nome as "categorias"
+
+from livros
+inner join categorias on (livros.id_categoria = categorias.id);
+
+select * from vw_livros_fantasia where categorias = "fantasia";
+
 -- Criar uma view vw_livros_autor_tolkien (listar nome do livro, nome do autor) filtrar autor 'J.R.R. Tolkien'
+
+
 -- Criar uma view vw_livros_por_categoria (listar nome da categoria, quantidade livros) group by necessário
 -- Criar uma view vw_paginas_por_autor (listar nome do autor, soma da quantidade de páginas) group by necessário
